@@ -47,9 +47,9 @@ setup(
     version="2021.07.10",
     long_description=long_d,
     install_requires=[
+        "requests>=2.26.0",
         "numpy>=1.19.5",
         "julia>=0.5.6",
-        "requests",
     ],
     extras_require={
         "jarvis-tools": ["jarvis-tools"],
@@ -108,20 +108,37 @@ if not hasjulia:  # if the correct Julia version is not present
     if not os.path.exists(julia_cmd):
         print("Julia not present in path:", mpath, "...downloading...")
         subfolder = os.path.join(mpath, "tb3py", "julia")
-        os.makedirs(subfolder)
+        if not os.path.exists(subfolder):
+            os.makedirs(subfolder)
         # os.system("mkdir "+mpath+"/src/julia") # create a subfodler for julia
         os.chdir(subfolder)  # go to the subfolder
         # os.chdir(mpath+"/src/julia") # go to the subfolder
         ## download julia
-        juliafile = "julia-1.6.1-linux-x86_64.tar.gz"  # julia file
-        j_link = "https://julialang-s3.julialang.org/bin/linux/x64/1.6/"
+        juliafile = os.path.join(
+            mpath, "julia-1.6.1-linux-x86_64.tar.gz"
+        )  # julia file
+        # juliafile = os.path.join(mpath,"julia-1.6.1-linux-x86_64.tar.gz")  # julia file
+        # j_link = "https://julialang-s3.julialang.org/bin/linux/x64/1.6/"
+        j_link = (
+            "https://julialang-s3.julialang.org/bin/linux/x64/1.6/"
+            + "julia-1.6.1-linux-x86_64.tar.gz"
+        )
+        print("jlink", j_link)
+        import requests
+        import tarfile
 
         r_julia = requests.get(j_link, stream=True).content
         with open(juliafile, "wb") as jfile:
             jfile.write(r_julia)
-        my_tar = tarfile.open(juliafile)
-        my_tar.extractall(".")
-        my_tar.close()
+        print("juliafile", juliafile)
+        try:
+            my_tar = tarfile.open(juliafile)
+            my_tar.extractall()
+            my_tar.close()
+        except Exception as exp:
+            print(exp)
+            cmd = "tar -xvzf " + juliafile
+            os.system(cmd)
         os.remove(juliafile)
         # os.system("wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/"+juliafile)
         # os.system("tar -xvf "+juliafile) # untar the file
@@ -152,7 +169,7 @@ print("My julia command : ", julia_cmd)
 
 # install
 sysimage = os.path.join(
-    os.environ["HOME"], "julia", "sysimages", "sys_threebodytb.so"
+    os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
 )
 print("sysimage", sysimage)
 if not os.path.isfile(sysimage):
