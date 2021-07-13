@@ -1,6 +1,6 @@
-# ThreeBodyTB_python
+# TB3PY
 
-by Kevin F. Garrity
+by Kevin F. Garrity and Kamal Choudhary
 
 This is a python wrapper for the
 [ThreeBodyTB.jl](http://github.com/usnistgov/ThreeBodyTB.jl) Julia
@@ -18,13 +18,13 @@ Julia knowledge run the code using the
 1) Clone this distribution.
 
     ```
-    git clone https://github.com/kfgarrity/ThreeBodyTB_python.git
+    git clone https://github.com/usnistgov/tb3py.git
     ```
     
 2) Run the installation
 
     ```
-    python3 install.py
+    python setpu.py develop
     ```
 
 Note that this can take a while and may use significant disk space. The code
@@ -32,16 +32,12 @@ will, if necessary, a) download & install Julia b) download & install
 ThreeBodyTB.jl, and c) create a system image for fast loading.
 
 
-3) Import TB3.py
+3) Example usage :
 
-Example usage :
-
-    >>> import TB3
-    >>> import numpy as np
-    >>> A = np.eye(3) * 5.0
-    >>> coords = np.zeros((1,3))
-    >>> c = TB3.jl.makecrys(A, coords, ["Li"])
-    >>> energy, tbc, flag = TB3.jl.scf_energy(c)
+    ```
+    from tb3py.main import example
+    example()
+    ```
 
 
 For main documentation of ThreeBodyTB.jl, see [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pages.nist.gov/ThreeBodyTB.jl/)
