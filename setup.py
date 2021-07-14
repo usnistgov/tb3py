@@ -44,7 +44,7 @@ def install(julia=None):
 
 setup(
     name="tb3py",
-    version="2021.07.10",
+    version="2021.07.11",
     long_description=long_d,
     install_requires=[
         "requests>=2.26.0",
@@ -62,7 +62,7 @@ setup(
         "tb3: an open-source software package for accurate and efficient electronic structure calculations using tight-binding (TB), including three-body interactions. https://pages.nist.gov/ThreeBodyTB.jl"
     ),
     license="NIST",
-    url="https://github.com/kfgarrity/ThreeBodyTB_python",
+    url="https://github.com/usnistgov/tb3py",
     packages=find_packages(),
     # long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[

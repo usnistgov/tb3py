@@ -12,8 +12,8 @@ import sys
 
 plt.switch_backend("agg")
 
-angst_to_bohr = 1.88973
-const = 13.605662285137
+angst_to_bohr = 1  # 1.88973
+const = 1  # 13.605662285137
 
 
 sysimage = os.path.join(
