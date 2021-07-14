@@ -176,7 +176,10 @@ print("sysimage", sysimage)
 if not os.path.isfile(sysimage):
     # import TB3.juliarun as juliarun
     install(julia_cmd)  # install Julia dependences
-
+julia_bin = os.path.join(
+    mpath, "tb3py", "julia", "julia-1.6.1", "bin"
+)  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
+os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
 """
 
 from julia.api import Julia
