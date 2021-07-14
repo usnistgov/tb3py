@@ -1,5 +1,8 @@
 """Module to run tb3py."""
+
+import os
 import numpy as np
+from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from julia import ThreeBodyTB as TB
 import matplotlib.pyplot as plt
@@ -10,27 +13,44 @@ angst_to_bohr = 1.88973
 const = 13.605662285137
 
 
+sysimage = os.path.join(
+    os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
+)
+julia_cmd = mpath = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    "julia",
+    "julia-1.6.1",
+    "bin",
+    "julia",
+)
+
+
+jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
+jlsession.eval("using Suppressor")  # suppress output
+
+
 def get_crys_from_atoms(atoms=None):
     """Get TightlyBound crys object from jarvis.core.Atoms."""
     lattice_mat = np.array(atoms.lattice_mat, dtype="float") * angst_to_bohr
     frac_coords = np.array(atoms.frac_coords, dtype="float")
-    elements = np.array(mat.elements)
+    elements = np.array(atoms.elements)
     crys = TB.makecrys(lattice_mat, frac_coords, elements)
     return crys
 
 
 def get_energy_bandstructure(atoms=None, filename=None):
+    """Get bandstructure, total energy and bandgap."""
     kpoints = Kpoints().kpath(atoms, line_density=20)
     labels = kpoints.to_dict()["labels"]
     kpts = kpoints.to_dict()["kpoints"]
     crys = get_crys_from_atoms(atoms)
     energy, tbc, flag = TB.scf_energy(crys)
     tot_energy = round(const * float(energy), 5)
-    vals = const * np.array(B.calc_bands(tbc, kpts) - tbc.efermi)
+    vals = const * np.array(TB.calc_bands(tbc, kpts) - tbc.efermi)
     vbm, cbm = TB.TB.find_vbm_cbm(vals, const * tbc.efermi)
     band_gap = cbm - vbm
     if band_gap < 0:
-        bandg_gap = 0
+        band_gap = 0
     if filename is not None:
         for i, j in enumerate(vals.T):
             plt.plot(j, c="blue")
