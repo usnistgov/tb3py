@@ -34,6 +34,7 @@ source activate my_tb3
 
 Now, let's install the package:
 ```
+pip install requests
 git clone https://github.com/usnistgov/tb3py.git
 cd tb3py
 python setup.py develop
