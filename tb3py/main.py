@@ -13,7 +13,7 @@ import sys
 plt.switch_backend("agg")
 
 angst_to_bohr = 1  # 1.88973
-const = 1  # 13.605662285137
+const = 13.605662285137
 
 
 sysimage = os.path.join(
@@ -84,8 +84,11 @@ def get_energy_bandstructure(atoms=None, filename=None):
                     new_kp.append(i)
                     new_labels.append("$" + str(j) + "$")
             count += 1
+        plt.rcParams.update({"font.size": 18})
         plt.xticks(new_kp, new_labels)
+        plt.axhline(y=0, c="g", linestyle="-.")
         plt.ylabel("Energy (eV)")
+        plt.tight_layout()
         plt.savefig(filename)
         plt.close()
         print("Bandstructure plot saved in:", filename)
