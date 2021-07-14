@@ -21,8 +21,10 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install numpy
         python setup.py install
-        pip install flake8 pytest pycodestyle pydocstyle codecov pytest-cov coverage 
-        python tb3py/tests/test_ptop.py 
+        #pip install flake8 pytest pycodestyle pydocstyle codecov pytest-cov coverage 
+        #python tb3py/tests/test_ptop.py 
+        #
+        #
         #coverage run -m pytest
         #coverage report -m
 
