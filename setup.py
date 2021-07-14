@@ -113,12 +113,12 @@ if __name__ == "__main__":
     print("hasjulia: ", hasjulia)
     if not hasjulia:  # if the correct Julia version is not present
         julia_cmd = os.path.join(
-            mpath, "tb3py", "tjulia", "julia-1.6.1", "bin", "julia"
+            mpath, "julia", "julia-1.6.1", "bin", "julia"
         )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
         # julia_cmd = mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
         if not os.path.exists(julia_cmd):
             print("Julia not present in path:", mpath, "...downloading...")
-            subfolder = os.path.join(mpath, "tb3py", "tjulia")
+            subfolder = os.path.join(mpath, "julia")
             if not os.path.exists(subfolder):
                 os.makedirs(subfolder)
             # os.system("mkdir "+mpath+"/src/julia") # create a subfodler for julia
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         # import TB3.juliarun as juliarun
         install(julia_cmd)  # install Julia dependences
     julia_bin = os.path.join(
-        mpath, "tb3py", "tjulia", "julia-1.6.1", "bin"
+        mpath, "julia", "julia-1.6.1", "bin"
     )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
     os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
     print(os.environ["PATH"])
