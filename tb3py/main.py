@@ -102,4 +102,8 @@ if __name__ == "__main__":
     atoms = Atoms.from_dict(
         get_jid_data(jid="JVASP-1002", dataset="dft_3d")["atoms"]
     )
-    get_energy_bandstructure(atoms=atoms)
+    print(atoms)
+    tot_energy, band_gap = get_energy_bandstructure(
+        atoms=atoms, filename="bands.png"
+    )
+    print("tot_energy, band_gap", tot_energy, band_gap)
