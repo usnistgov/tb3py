@@ -24,6 +24,7 @@ setup(
         "requests>=2.26.0",
         "numpy>=1.19.5",
         "julia>=0.5.6",
+        "jarvis-tools>=2021.7.10",
     ],
     extras_require={
         "jarvis-tools": ["jarvis-tools"],
@@ -36,6 +37,12 @@ setup(
     license="NIST",
     url="https://github.com/kfgarrity/ThreeBodyTB_python",
     packages=find_packages(),
+    # entry_points={
+    #    "console_scripts": [
+    #        "julia-py = julia.julia_py:main",
+    #        "python-jl = julia.python_jl:main",
+    #    ],
+    # },
     # long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[
         "Programming Language :: Python :: 3.7",
@@ -199,3 +206,6 @@ if __name__ == "__main__":
         or ("julia version 1.8" in str(out))
     )
     print("hasjulia", hasjulia)
+    from julia.api import Julia
+
+    jl = Julia(compiled_modules=False)

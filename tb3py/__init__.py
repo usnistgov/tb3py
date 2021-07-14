@@ -1,17 +1,22 @@
 """Module to run tb3py."""
-import sys
+
+# import sys
 import subprocess
-# import requests
-import glob
+
+# import glob
 import os
+import tb3py
+import julia
+from julia.api import Julia
+
+mpath = str(tb3py.__path__[0])
 
 
 def precompile(julia=None):
-    """Precompile Julia"""
+    """Precompile Julia."""
     print("precompile")
     if julia is None:
         julia = "julia"  # julia command
-    #    os.system(julia+" --eval  \"using TightlyBound; TightlyBound.compile()\"")
     os.system(
         julia
         + ' --eval  "using ThreeBodyTB; using Plots; ThreeBodyTB.compile()"'
@@ -19,11 +24,10 @@ def precompile(julia=None):
 
 
 def install(julia=None):
-    """Install Julia and TB"""
+    """Install Julia and TB."""
     if julia is None:
         julia = "julia"  # julia command
     print("install ", julia)
-    #    os.system(julia+" --eval "+"\"import Pkg; Pkg.add(url=\\\"https://github.com/kfgarrity/ThreeBodyTB.jl\\\")\"")
 
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"ThreeBodyTB\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"PyCall\\")"')
@@ -31,10 +35,6 @@ def install(julia=None):
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"Suppressor\\")"')
     precompile(julia)
 
-
-import tb3py
-
-mpath = str(tb3py.__path__[0])
 
 # mpath = os.path.dirname(os.path.realpath(__file__))
 
@@ -46,7 +46,7 @@ try:
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     ).communicate()
-except:
+except Exception:
     out = ""
 # check if JUlia has the correct version
 hasjulia = (
@@ -59,7 +59,7 @@ hasjulia = (
 
 # print(hasjulia) ; exit()
 
-print("hasjulia: ", hasjulia)
+# print("hasjulia: ", hasjulia)
 julia_cmd = os.path.join(
     mpath, "tb3py", "tjulia", "julia-1.6.1", "bin", "julia"
 )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
@@ -70,27 +70,22 @@ if not hasjulia:  # if the correct Julia version is not present
         subfolder = os.path.join(mpath, "tb3py", "tjulia")
         if not os.path.exists(subfolder):
             os.makedirs(subfolder)
-        # os.system("mkdir "+mpath+"/src/julia") # create a subfodler for julia
         os.chdir(subfolder)  # go to the subfolder
-        # os.chdir(mpath+"/src/julia") # go to the subfolder
-        ## download julia
         juliafile = os.path.join(
             mpath, "julia-1.6.1-linux-x86_64.tar.gz"
         )  # julia file
-        # juliafile = os.path.join(mpath,"julia-1.6.1-linux-x86_64.tar.gz")  # julia file
-        # j_link = "https://julialang-s3.julialang.org/bin/linux/x64/1.6/"
         j_link = (
             "https://julialang-s3.julialang.org/bin/linux/x64/1.6/"
             + "julia-1.6.1-linux-x86_64.tar.gz"
         )
-        print("jlink", j_link)
+        # print("jlink", j_link)
         import requests
         import tarfile
 
         r_julia = requests.get(j_link, stream=True).content
         with open(juliafile, "wb") as jfile:
             jfile.write(r_julia)
-        print("juliafile", juliafile)
+        # print("juliafile", juliafile)
         try:
             my_tar = tarfile.open(juliafile)
             my_tar.extractall()
@@ -100,9 +95,6 @@ if not hasjulia:  # if the correct Julia version is not present
             cmd = "tar -xvzf " + juliafile
             os.system(cmd)
         os.remove(juliafile)
-        # os.system("wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/"+juliafile)
-        # os.system("tar -xvf "+juliafile) # untar the file
-        # os.system("rm "+juliafile) # rm the file
     else:
         print("We already downloaded to ", julia_cmd)
 
@@ -131,7 +123,8 @@ print("My julia command : ", julia_cmd)
 sysimage = os.path.join(
     os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
 )
-print("sysimage", sysimage)
+# print("sysimage", sysimage)
+# install(julia_cmd)  # install Julia dependences
 if not os.path.isfile(sysimage):
     # import TB3.juliarun as juliarun
     install(julia_cmd)  # install Julia dependences
@@ -139,7 +132,7 @@ julia_bin = os.path.join(
     mpath, "tb3py", "tjulia", "julia-1.6.1", "bin"
 )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
 os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
-print(os.environ["PATH"])
+# print('pathhhhhh',os.environ["PATH"])
 # os.system('julia')
 try:
     out, err = subprocess.Popen(
@@ -147,7 +140,7 @@ try:
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     ).communicate()
-except Exception as ex:
+except Exception as exp:
     print("check", exp)
     out = ""
 # check if JUlia has the correct version
@@ -157,11 +150,16 @@ hasjulia = (
     or ("julia version 1.7" in str(out))
     or ("julia version 1.8" in str(out))
 )
-print("hasjulia", hasjulia)
+# print("hasjulia init final", hasjulia)
 
-import os
-from julia.api import Julia
+# """
+# cmd='python -m pip install julia'
+# os.system(cmd)
+# print('pathhhhhh',os.environ["PATH"])
 
-print("julia_cmd in main.py", julia_cmd)
+julia.install()
+
+# print("julia_cmd in main.py", julia_cmd)
 jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
 jlsession.eval("using Suppressor")  # suppress output
+# """

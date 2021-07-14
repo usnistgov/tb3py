@@ -22,8 +22,9 @@ jobs:
         python -m pip install numpy
         python setup.py install
         pip install flake8 pytest pycodestyle pydocstyle codecov pytest-cov coverage 
-        coverage run -m pytest
-        coverage report -m
+        python tb3py/tests/test_ptop.py 
+        #coverage run -m pytest
+        #coverage report -m
 
     - name: Lint
       run: |
@@ -34,7 +35,6 @@ jobs:
     - name: Test with pytest
       run: |
         export DGLBACKEND=pytorch
-        pip install flake8 pytest pycodestyle pydocstyle codecov pytest-cov coverage 
         echo 'pip freeze'
         pip freeze
         #coverage run -m pytest
