@@ -6,14 +6,16 @@ sysimage = os.path.join(
     os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
 )
 julia_cmd = mpath = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
+    os.path.dirname(os.path.dirname(__file__),),
+    #os.path.dirname(os.path.realpath(__file__)),
+    "tb3py",
     "julia",
     "julia-1.6.1",
     "bin",
     "julia",
 )
 
-
+print ('julia_cmd in main.py',julia_cmd)
 jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
 jlsession.eval("using Suppressor")  # suppress output
 
