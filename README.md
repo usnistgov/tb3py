@@ -1,3 +1,4 @@
+![alt text](https://github.com/usnistgov/tb3py/actions/workflows/main.yml/badge.svg)
 # TB3PY
 
 by Kevin F. Garrity and Kamal Choudhary
@@ -8,31 +9,42 @@ package, which runs two- and three-body tight-binding calculations for
 materials.
 
 Using the Julia version directly is the primary method for running the
-code. However, I recognize that many materials science codes are written in
-python. Therefore, I have created this wrapper to help people with no
-Julia knowledge run the code using the
+code. However, this code is created to help users who might be more familiar
+with python using the
 [PyJulia](https://github.com/JuliaPy/pyjulia) interface.
 
 ## Installation
 
-1) Clone this distribution.
+First create a conda environment:
+Install miniconda environment from https://conda.io/miniconda.html
+Based on your system requirements, you'll get a file something like 'Miniconda3-latest-XYZ'.
 
-    ```
-    git clone https://github.com/usnistgov/tb3py.git
-    ```
-    
-2) Run the installation
+Now,
 
-    ```
-    python setpu.py develop
-    ```
+```
+bash Miniconda3-latest-Linux-x86_64.sh (for linux)
+bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+```
+Download 32/64 bit python 3.6 miniconda exe and install (for windows)
+Now, let's make a conda environment, say "version", choose other name as you like::
+```
+conda create --name my_tb3 python=3.8
+source activate my_tb3
+```
+
+Now, let's install the package:
+```
+git clone https://github.com/usnistgov/tb3py.git
+cd tb3py
+python setup.py develop
+```
 
 Note that this can take a while and may use significant disk space. The code
 will, if necessary, a) download & install Julia b) download & install
 ThreeBodyTB.jl, and c) create a system image for fast loading.
 
 
-3) Example usage :
+To check if the installation went well, please try:
 
     ```
     pytest tb3py/tests/test_ptop.py
@@ -41,6 +53,19 @@ ThreeBodyTB.jl, and c) create a system image for fast loading.
 
 For main documentation of ThreeBodyTB.jl, see [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pages.nist.gov/ThreeBodyTB.jl/)
 This code is only the wrapper that downloads and installs that code.
+
+## Examples
+
+- Predict total energy, electronic bandgap and bandstructure for a system using POSCAR file:
+
+  ```
+  python tb3py/main.py --poscar_file tb3py/examples/POSCAR
+  ```
+- Predict total energy, electronic bandgap and bandstructure for a system using cif file:
+
+  ```
+  python tb3py/main.py --cif_file tb3py/examples/JVASP-1002.cif
+  ```
 
 ## Performance Tips
 
@@ -56,3 +81,4 @@ This code is only the wrapper that downloads and installs that code.
 
 - Note that you must delete the system image if you want to update the
   ThreeBodyTB.jl code and re-run the installation.
+

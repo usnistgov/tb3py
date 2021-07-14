@@ -5,6 +5,10 @@ import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 import matplotlib.pyplot as plt
+from jarvis.db.figshare import get_jid_data
+from jarvis.core.atoms import Atoms
+import argparse
+import sys
 
 plt.switch_backend("agg")
 
@@ -30,7 +34,7 @@ julia_bin = os.path.join(
     "bin",
 )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
 os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
-print(os.environ["PATH"])
+# print(os.environ["PATH"])
 jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
 jlsession.eval("using Suppressor")  # suppress output
 try:
@@ -50,6 +54,7 @@ def get_crys_from_atoms(atoms=None):
 
 def get_energy_bandstructure(atoms=None, filename=None):
     """Get bandstructure, total energy and bandgap."""
+    print(atoms)
     kpoints = Kpoints().kpath(atoms, line_density=20)
     labels = kpoints.to_dict()["labels"]
     kpts = kpoints.to_dict()["kpoints"]
@@ -83,6 +88,7 @@ def get_energy_bandstructure(atoms=None, filename=None):
         plt.ylabel("Energy (eV)")
         plt.savefig(filename)
         plt.close()
+        print("Bandstructure plot saved in:", filename)
     return tot_energy, band_gap
 
 
@@ -95,10 +101,32 @@ def example():
     return energy, tbc, flag
 
 
-if __name__ == "__main__":
-    from jarvis.db.figshare import get_jid_data
-    from jarvis.core.atoms import Atoms
+def predict_for_poscar(filename="POSCAR", band_file="bands.png"):
+    """Predict properties for a POSCAR file."""
+    atoms = Atoms.from_poscar(filename)
+    tot_energy, band_gap = get_energy_bandstructure(
+        atoms=atoms, filename=band_file
+    )
+    print("tot_energy, band_gap", tot_energy, band_gap)
+    return tot_energy, band_gap
 
+
+def predict_for_cif(filename="atoms.cif", band_file="bands.png"):
+    """Predict properties for a .cif file."""
+    try:
+        atoms = Atoms.from_cif(filename)
+    except Exception as exp:
+        raise NotImplementedError("pip install cif2cell, and try again", exp)
+        pass
+    tot_energy, band_gap = get_energy_bandstructure(
+        atoms=atoms, filename=band_file
+    )
+    print("tot_energy, band_gap", tot_energy, band_gap)
+    return tot_energy, band_gap
+
+
+def example_from_jarvis_db():
+    """Run an example calculation with structure from JARVIS-DFT."""
     atoms = Atoms.from_dict(
         get_jid_data(jid="JVASP-1002", dataset="dft_3d")["atoms"]
     )
@@ -107,3 +135,29 @@ if __name__ == "__main__":
         atoms=atoms, filename="bands.png"
     )
     print("tot_energy, band_gap", tot_energy, band_gap)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Python wrapper for Tight-binding two and three body."
+    )
+
+    parser.add_argument(
+        "--poscar_file",
+        default="NA",
+        help="Path to a POSCAR file.",
+    )
+
+    parser.add_argument(
+        "--cif_file",
+        default="NA",
+        help="Path to a .cif file.",
+    )
+
+    args = parser.parse_args(sys.argv[1:])
+    if args.poscar_file != "NA":
+        predict_for_poscar(filename=args.poscar_file)
+    elif args.cif_file != "NA":
+        predict_for_cif(filename=args.cif_file)
+    else:
+        raise NotImplementedError(args)
