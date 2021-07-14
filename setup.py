@@ -51,6 +51,7 @@ setup(
         "numpy>=1.19.5",
         "julia>=0.5.6",
         "jarvis-tools",
+        "pytest",
     ],
     extras_require={
         "jarvis-tools": ["jarvis-tools"],

@@ -35,8 +35,7 @@ ThreeBodyTB.jl, and c) create a system image for fast loading.
 3) Example usage :
 
     ```
-    from tb3py.main import example
-    example()
+    pytest tb3py/tests/test_ptop.py
     ```
 
 
