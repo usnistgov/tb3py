@@ -45,13 +45,6 @@ will, if necessary, a) download & install Julia b) download & install
 ThreeBodyTB.jl, and c) create a system image for fast loading.
 
 
-To check if the installation went well, please try:
-
-```
-pytest tb3py/tests/test_ptop.py
-```
-
-
 For main documentation of ThreeBodyTB.jl, see [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pages.nist.gov/ThreeBodyTB.jl/)
 This code is only the wrapper that downloads and installs that code.
 
