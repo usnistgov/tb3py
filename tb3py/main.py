@@ -52,6 +52,14 @@ def get_crys_from_atoms(atoms=None):
     return crys
 
 
+def get_energy_force_stress(atoms=None):
+    """Get energy, forces and strss."""
+    crys = get_crys_from_atoms(atoms)
+    energy, f_cart, stress, tbc = TB.scf_energy_force_stress(crys)
+    print("energy, f_cart, stress", energy, f_cart, stress)
+    return energy, f_cart, stress, tbc
+
+
 def get_energy_bandstructure(atoms=None, filename=None):
     """Get bandstructure, total energy and bandgap."""
     print(atoms)
@@ -92,7 +100,7 @@ def get_energy_bandstructure(atoms=None, filename=None):
         plt.savefig(filename)
         plt.close()
         print("Bandstructure plot saved in:", filename)
-    return tot_energy, band_gap
+    return tot_energy, band_gap, tbc
 
 
 def example():
@@ -107,7 +115,7 @@ def example():
 def predict_for_poscar(filename="POSCAR", band_file="bands.png"):
     """Predict properties for a POSCAR file."""
     atoms = Atoms.from_poscar(filename)
-    tot_energy, band_gap = get_energy_bandstructure(
+    tot_energy, band_gap, tbc = get_energy_bandstructure(
         atoms=atoms, filename=band_file
     )
     print("tot_energy, band_gap", tot_energy, band_gap)
@@ -121,7 +129,7 @@ def predict_for_cif(filename="atoms.cif", band_file="bands.png"):
     except Exception as exp:
         raise NotImplementedError("pip install cif2cell, and try again", exp)
         pass
-    tot_energy, band_gap = get_energy_bandstructure(
+    tot_energy, band_gap, tbc = get_energy_bandstructure(
         atoms=atoms, filename=band_file
     )
     print("tot_energy, band_gap", tot_energy, band_gap)
@@ -134,7 +142,7 @@ def example_from_jarvis_db():
         get_jid_data(jid="JVASP-1002", dataset="dft_3d")["atoms"]
     )
     print(atoms)
-    tot_energy, band_gap = get_energy_bandstructure(
+    tot_energy, band_gap, tbc = get_energy_bandstructure(
         atoms=atoms, filename="bands.png"
     )
     print("tot_energy, band_gap", tot_energy, band_gap)
