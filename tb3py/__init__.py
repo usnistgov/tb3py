@@ -6,8 +6,6 @@ import subprocess
 # import glob
 import os
 import tb3py
-import julia
-from julia.api import Julia
 
 mpath = str(tb3py.__path__[0])
 
@@ -157,6 +155,8 @@ hasjulia = (
 # os.system(cmd)
 # print('pathhhhhh',os.environ["PATH"])
 
+import julia
+from julia.api import Julia
 julia.install()
 
 # print("julia_cmd in main.py", julia_cmd)
