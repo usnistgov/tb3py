@@ -9,7 +9,6 @@ import os
 
 from setuptools import setup, find_packages
 
-# TB3_DIR = os.path.dirname(os.path.abspath(__file__))
 
 base_dir = os.path.dirname(__file__)
 with open(os.path.join(base_dir, "README.md")) as f:
@@ -33,9 +32,14 @@ def install(julia=None):
     if julia is None:
         julia = "julia"  # julia command
     print("install ", julia)
-    #    os.system(julia+" --eval "+"\"import Pkg; Pkg.add(url=\\\"https://github.com/kfgarrity/ThreeBodyTB.jl\\\")\"")
-
-    os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"ThreeBodyTB\\")"')
+    # NOTE: For a new Github release:
+    # rm ~/.julia/sysimages/sys_threebodytb.so
+    os.system(
+        julia
+        + " --eval "
+        + '"import Pkg; Pkg.add(url=\\"https://github.com/usnistgov/ThreeBodyTB.jl\\")"'
+    )
+    # os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"ThreeBodyTB\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"PyCall\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"Plots\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"Suppressor\\")"')

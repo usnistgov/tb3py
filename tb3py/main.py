@@ -4,6 +4,8 @@ import os
 import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
+from jarvis.core.kpoints import generate_kgrid
+
 import matplotlib.pyplot as plt
 from jarvis.db.figshare import get_jid_data
 from jarvis.core.atoms import Atoms
@@ -12,7 +14,7 @@ import sys
 
 plt.switch_backend("agg")
 
-angst_to_bohr = 1  # 1.88973
+angst_to_bohr = 1  # 0.529177210903  # 1.88973
 const = 13.605662285137
 
 
@@ -58,6 +60,43 @@ def get_energy_force_stress(atoms=None):
     energy, f_cart, stress, tbc = TB.scf_energy_force_stress(crys)
     print("energy, f_cart, stress", energy, f_cart, stress)
     return energy, f_cart, stress, tbc
+
+
+def get_energy(
+    atoms=None, grid=[10, 10, 10], relax_atoms=False, use_grid_for_scf=False
+):
+    """Get total energy and bandgap."""
+    print(atoms)
+    info = {}
+    energy = "na"
+    force = "na"
+    stress = "na"
+
+    crys = get_crys_from_atoms(atoms)
+    if relax_atoms:
+        if use_grid_for_scf:
+            cfinal, tbc, energy, force, stress = TB.relax_structure(
+                crys, grid=grid
+            )
+            force = force.tolist()
+            stress = stress.tolist()
+        else:
+            cfinal, tbc, energy, force, stress = TB.relax_structure(crys)
+    else:
+        if use_grid_for_scf:
+            energy, tbc, flag = TB.scf_energy(crys, grid=grid)
+        else:
+            energy, tbc, flag = TB.scf_energy(crys)
+    directgap, indirectgap, gaptype, bandwidth = TB.BandStruct.band_summary(
+        tbc
+    )
+    info["directgap"] = directgap
+    info["indirectgap"] = indirectgap
+    info["atomization_energy"] = energy
+    info["force"] = force
+    info["stress"] = stress
+
+    return info
 
 
 def get_energy_bandstructure(atoms=None, filename=None):
