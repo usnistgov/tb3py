@@ -1,22 +1,61 @@
 """Predict properties of a db."""
 from jarvis.db.figshare import data
+from jarvis.db.jsonutils import dumpjson
 from sklearn.metrics import mean_absolute_error
-
-d = data("qe_tb")
+import matplotlib.pyplot as plt
 from jarvis.core.atoms import Atoms
 from tb3py.main import get_energy_bandstructure, get_energy
-from jarvis.core.atoms import Atoms
 
-tb_vals = []
-dft_vals = []
-gap_key = "indir_gap"
-for i in d:
-    a = Atoms.from_dict(i["atoms"])
-    info = get_energy(a)
-    # tot_energy, band_gap, tbc=get_energy_bandstructure(a)
-    print("TB gap, DFT gap", info["indirectgap"], i["indir_gap"])
-    tb_vals.append(info["indirectgap"])
-    dft_vals.append(i["indir_gap"])
-    # break
-mae = mean_absolute_error(dft_vals, tb_vals)
-print(mae)
+plt.switch_backend("agg")
+
+
+def predict_for_db(
+    dataset="dft_3d",
+    id_tag="jid",
+    gap_key="optb88vdw_bandgap",
+    energy_key="optb88vdw_total_energy",
+):
+    d = data(dataset)
+    mem = []
+
+    for ii, i in enumerate(d):
+        #if ii < 5:
+         try:
+            a = Atoms.from_dict(i["atoms"])
+            info = get_energy(a)
+            info["id"] = i[id_tag]
+            if gap_key != "":
+                info[dataset + "_" + gap_key] = i[gap_key]
+            if energy_key != "":
+                info[dataset + "_" + energy_key] = i[energy_key]
+            mem.append(info)
+         except Exception as exp:
+            print(exp)
+            pass
+    dumpjson(data=mem, filename=dataset + "_tb.json")
+
+    if gap_key != "":
+        mae_gap = mean_absolute_error(
+            [i[dataset + "_" + gap_key] for i in mem], [i["indirectgap"] for i in mem]
+        )
+        plt.plot(
+            [i[dataset + "_" + gap_key] for i in mem], [i["indirectgap"] for i in mem], "."
+        )
+        plt.plot([i[dataset + "_" + gap_key] for i in mem], [i[dataset + "_" + gap_key] for i in mem])
+        name = dataset + "_" + gap_key + ".png"
+        plt.savefig(name)
+        plt.close()
+        print("mae_gap", mae_gap)
+    if energy_key != "":
+        mae_energy = mean_absolute_error(
+            [i[dataset + "_" + energy_key] for i in mem], [i["energy"] for i in mem]
+        )
+        plt.plot([i[dataset + "_" + energy_key] for i in mem], [i["energy"] for i in mem], ".")
+        plt.plot([i[dataset + "_" + energy_key] for i in mem], [i[dataset + "_" + energy_key] for i in mem])
+        name = dataset + "_" + energy_key + ".png"
+        plt.savefig(name)
+        plt.close()
+        print("mae_energy", mae_energy)
+
+if __name__ == "__main__":
+    predict_for_db()
