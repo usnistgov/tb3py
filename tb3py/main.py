@@ -4,18 +4,19 @@ import os
 import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
-from jarvis.core.kpoints import generate_kgrid
+# from jarvis.core.kpoints import generate_kgrid
 
 import matplotlib.pyplot as plt
 from jarvis.db.figshare import get_jid_data
 from jarvis.core.atoms import Atoms
 import argparse
 import sys
+import pprint
 
 plt.switch_backend("agg")
 
-angst_to_bohr = 1  # 0.529177210903  # 1.88973
-const = 13.605662285137
+# angst_to_bohr = 1  # 0.529177210903  # 1.88973
+# const = 13.605662285137
 
 
 sysimage = os.path.join(
@@ -47,7 +48,7 @@ except Exception:
 
 def get_crys_from_atoms(atoms=None):
     """Get TightlyBound crys object from jarvis.core.Atoms."""
-    lattice_mat = np.array(atoms.lattice_mat, dtype="float") * angst_to_bohr
+    lattice_mat = np.array(atoms.lattice_mat, dtype="float")
     frac_coords = np.array(atoms.frac_coords, dtype="float")
     elements = np.array(atoms.elements)
     crys = TB.makecrys(lattice_mat, frac_coords, elements)
@@ -92,7 +93,7 @@ def get_energy(
     )
     info["directgap"] = directgap
     info["indirectgap"] = indirectgap
-    info["atomization_energy"] = energy
+    info["energy"] = energy
     info["force"] = force
     info["stress"] = stress
 
@@ -107,9 +108,9 @@ def get_energy_bandstructure(atoms=None, filename=None):
     kpts = kpoints.to_dict()["kpoints"]
     crys = get_crys_from_atoms(atoms)
     energy, tbc, flag = TB.scf_energy(crys)
-    tot_energy = round(const * float(energy), 5)
-    vals = const * np.array(TB.calc_bands(tbc, kpts) - tbc.efermi)
-    vbm, cbm = TB.TB.find_vbm_cbm(vals, const * tbc.efermi)
+    tot_energy = energy
+    vals = np.array(TB.calc_bands(tbc, kpts) - tbc.efermi)
+    vbm, cbm = TB.TB.find_vbm_cbm(vals, tbc.efermi)
     band_gap = cbm - vbm
     if band_gap < 0:
         band_gap = 0
@@ -154,11 +155,12 @@ def example():
 def predict_for_poscar(filename="POSCAR", band_file="bands.png"):
     """Predict properties for a POSCAR file."""
     atoms = Atoms.from_poscar(filename)
-    tot_energy, band_gap, tbc = get_energy_bandstructure(
-        atoms=atoms, filename=band_file
-    )
-    print("tot_energy, band_gap", tot_energy, band_gap)
-    return tot_energy, band_gap
+    info = get_energy(atoms=atoms)
+    # tot_energy, band_gap, tbc = get_energy_bandstructure(
+    #    atoms=atoms, filename=band_file
+    # )
+    pprint.pprint(info)
+    return info
 
 
 def predict_for_cif(filename="atoms.cif", band_file="bands.png"):
