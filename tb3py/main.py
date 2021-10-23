@@ -36,6 +36,13 @@ julia_bin = os.path.join(
     "julia-1.6.1",
     "bin",
 )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
+
+if not os.path.exists(julia_bin):
+    print("using preinstalled julia")
+    julia_cmd = "julia"
+    julia_bin = "julia"
+
+
 os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
 # print(os.environ["PATH"])
 jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
