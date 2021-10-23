@@ -4,7 +4,7 @@ import os
 import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
-from jarvis.core.kpoints import generate_kgrid
+# from jarvis.core.kpoints import generate_kgrid
 
 import matplotlib.pyplot as plt
 from jarvis.db.figshare import get_jid_data
@@ -12,10 +12,11 @@ from jarvis.core.atoms import Atoms
 import argparse
 import sys
 import pprint
+
 plt.switch_backend("agg")
 
-#angst_to_bohr = 1  # 0.529177210903  # 1.88973
-#const = 13.605662285137
+# angst_to_bohr = 1  # 0.529177210903  # 1.88973
+# const = 13.605662285137
 
 
 sysimage = os.path.join(
@@ -154,10 +155,10 @@ def example():
 def predict_for_poscar(filename="POSCAR", band_file="bands.png"):
     """Predict properties for a POSCAR file."""
     atoms = Atoms.from_poscar(filename)
-    info=get_energy(atoms=atoms)
-    #tot_energy, band_gap, tbc = get_energy_bandstructure(
+    info = get_energy(atoms=atoms)
+    # tot_energy, band_gap, tbc = get_energy_bandstructure(
     #    atoms=atoms, filename=band_file
-    #)
+    # )
     pprint.pprint(info)
     return info
 
