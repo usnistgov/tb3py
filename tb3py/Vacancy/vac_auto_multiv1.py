@@ -125,7 +125,7 @@ jids = [
 jids=['JVASP-39']
 chempot = loadjson("chempot.json")
 
-jids=['JVASP-25117','JVASP-837','JVASP-864','JVASP-95268','JVASP-1011','JVASP-25144','JVASP-14603','JVASP-828','JVASP-910']
+jids=['JVASP-25117','JVASP-864','JVASP-1011','JVASP-828','JVASP-910']
 def get_mono_vac_energy(atoms=None, jid=""):
     strts = Vacancy(atoms).generate_defects(
         # on_conventional_cell=True, enforce_c_size=12, extend=0
