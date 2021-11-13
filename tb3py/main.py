@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 from jarvis.db.figshare import get_jid_data
 from jarvis.core.atoms import Atoms
 import argparse
-import sys
 import pprint
 
 
@@ -32,6 +31,10 @@ try:
     jlsession.eval("using Suppressor")  # suppress output
 except Exception:
     print("Using non-sysimage version, might be slow.")
+    cmd = (
+        'julia --eval  "using ThreeBodyTB; using Plots; ThreeBodyTB.compile()"'
+    )
+    os.system(cmd)
     from julia.api import Julia
 
     jl = Julia(compiled_modules=False)
