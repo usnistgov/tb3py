@@ -24,8 +24,9 @@ jobs:
         python -m pip install numpy
         python setup.py install
         pytest tb3py/tests/test_ptop.py
-        #coverage run -m pytest
-        #coverage report -m
+        coverage run -m pytest
+        coverage report -m
+        codecov
 
     - name: Lint
       run: |
