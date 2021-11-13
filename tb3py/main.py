@@ -14,19 +14,28 @@ import argparse
 import sys
 import pprint
 
+
 plt.switch_backend("agg")
 
 # angst_to_bohr = 1  # 0.529177210903  # 1.88973
 # const = 13.605662285137
 
+try:
+    sysimage = os.path.join(
+        os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
+    )
+    julia_cmd = "julia"
+    # print(os.environ["PATH"])
+    jlsession = Julia(
+        runtime=julia_cmd, compiled_modules=False, sysimage=sysimage
+    )
+    jlsession.eval("using Suppressor")  # suppress output
+except Exception:
+    print("Using non-sysimage version, might be slow.")
+    from julia.api import Julia
 
-sysimage = os.path.join(
-    os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
-)
-julia_cmd = "julia"
-# print(os.environ["PATH"])
-jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
-jlsession.eval("using Suppressor")  # suppress output
+    jl = Julia(compiled_modules=False)
+    pass
 try:
     from julia import ThreeBodyTB as TB
 except Exception:
@@ -180,23 +189,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Python wrapper for Tight-binding two and three body."
     )
-
-    parser.add_argument(
-        "--poscar_file",
-        default="NA",
-        help="Path to a POSCAR file.",
-    )
-
-    parser.add_argument(
-        "--cif_file",
-        default="NA",
-        help="Path to a .cif file.",
-    )
-
-    args = parser.parse_args(sys.argv[1:])
-    if args.poscar_file != "NA":
-        predict_for_poscar(filename=args.poscar_file)
-    elif args.cif_file != "NA":
-        predict_for_cif(filename=args.cif_file)
-    else:
-        raise NotImplementedError(args)
+    example()
