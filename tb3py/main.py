@@ -32,6 +32,7 @@ try:
 except Exception:
     print("Using non-sysimage version, might be slow.")
     from julia.api import Julia
+
     jl = Julia(compiled_modules=False)
     cmd = (
         'julia --eval  "using ThreeBodyTB; using Plots; ThreeBodyTB.compile()"'
@@ -41,7 +42,7 @@ except Exception:
 try:
     from julia import ThreeBodyTB as TB
 except Exception as exp:
-    print ('Expjl', exp)
+    print("Expjl", exp)
     pass
 
 
