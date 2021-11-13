@@ -25,6 +25,7 @@ def precompile(julia=None):
         julia
         + ' --eval  "using ThreeBodyTB; using Plots; ThreeBodyTB.compile()"'
     )
+    print("precompile done")
 
 
 def install(julia=None):
