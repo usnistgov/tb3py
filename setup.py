@@ -35,7 +35,12 @@ def install(julia=None):
     print("install ", julia)
     # NOTE: For a new Github release:
     # rm ~/.julia/sysimages/sys_threebodytb.so
-    os.system(julia + " --eval " + '"import Pkg; Pkg.add(ThreeBodyTB")"')
+    os.system(
+        julia
+        + " --eval "
+        + '"import Pkg; Pkg.add(url=\\"https://github.com/usnistgov/ThreeBodyTB.jl\\")"'
+    )
+    # os.system(julia + " --eval " + '"import Pkg; Pkg.add(ThreeBodyTB")"')
     # os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"ThreeBodyTB\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"PyCall\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"Plots\\")"')
