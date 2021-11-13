@@ -1,14 +1,14 @@
-from jarvis.analysis.defects.vacancy import Vacancy
-from jarvis.db.jsonutils import loadjson, dumpjson
+# from jarvis.analysis.defects.vacancy import Vacancy
+from jarvis.db.jsonutils import dumpjson
 from jarvis.core.atoms import Atoms
 from jarvis.db.figshare import get_jid_data, data
-from tb3py.main import get_energy_bandstructure, get_energy
-from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
+from tb3py.main import get_energy
+# from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
 from jarvis.analysis.structure.spacegroup import (
     Spacegroup3D,
     symmetrically_distinct_miller_indices,
 )
-from jarvis.analysis.defects.surface import wulff_normals, Surface
+from jarvis.analysis.defects.surface import Surface
 import numpy as np
 
 dat = data("dft_3d")
@@ -128,9 +128,23 @@ jids = [
     "JVASP-102277",
 ]
 
-jids=['JVASP-972','JVASP-825','JVASP-1002','JVASP-943','JVASP-963','JVASP-14606','JVASP-14837','JVASP-934','JVASP-21195','JVASP-984','JVASP-1014','JVASP-79561','JVASP-901']
-# jids=['JVASP-816'] #Al
-# chempot=loadjson("chempot.json")
+jids = [
+    "JVASP-972",
+    "JVASP-825",
+    "JVASP-1002",
+    "JVASP-943",
+    "JVASP-963",
+    "JVASP-14606",
+    "JVASP-14837",
+    "JVASP-934",
+    "JVASP-21195",
+    "JVASP-984",
+    "JVASP-1014",
+    "JVASP-79561",
+    "JVASP-901",
+]
+
+
 def get_mono_surf_energy(atoms=None, id=""):
     atoms_cvn = Spacegroup3D(atoms).conventional_standard_structure
     info_perfect = get_energy(atoms_cvn, relax_atoms=False)

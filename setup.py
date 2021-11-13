@@ -37,7 +37,7 @@ def install(julia=None):
     os.system(
         julia
         + " --eval "
-        + '"import Pkg; Pkg.add(url=\\"https://github.com/usnistgov/ThreeBodyTB.jl\\")"'
+        + '"import Pkg; Pkg.add(ThreeBodyTB")"'
     )
     # os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"ThreeBodyTB\\")"')
     os.system(julia + " --eval " + '"import Pkg; Pkg.add(\\"PyCall\\")"')
@@ -48,18 +48,16 @@ def install(julia=None):
 
 setup(
     name="tb3py",
-    version="2021.07.11",
+    version="2021.11.11",
     long_description=long_d,
     install_requires=[
         "requests>=2.26.0",
         "numpy>=1.19.5",
         "julia>=0.5.6",
         "jarvis-tools",
+        "cython",
         "pytest",
     ],
-    extras_require={
-        "jarvis-tools": ["jarvis-tools"],
-    },
     author="Kevin Garrity, Kamal Choudhary",
     author_email="kevin.garrity@nist.gov",
     description=(

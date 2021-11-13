@@ -1,14 +1,13 @@
-from jarvis.analysis.defects.vacancy import Vacancy
-from jarvis.db.jsonutils import loadjson, dumpjson
+from jarvis.db.jsonutils import dumpjson
 from jarvis.core.atoms import Atoms
 from jarvis.db.figshare import get_jid_data, data
-from tb3py.main import get_energy_bandstructure, get_energy
-from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
+from tb3py.main import get_energy
+# from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
 from jarvis.analysis.structure.spacegroup import (
     Spacegroup3D,
     symmetrically_distinct_miller_indices,
 )
-from jarvis.analysis.defects.surface import wulff_normals, Surface
+from jarvis.analysis.defects.surface import Surface
 import numpy as np
 from interruptingcow import timeout
 
@@ -27,21 +26,21 @@ jids = [
     "JVASP-816",
     "JVASP-910",
     "JVASP-867",
-    #"JVASP-922",
-    #"JVASP-21195",
-    #"JVASP-1002",
-    #"JVASP-972",
+    # "JVASP-922",
+    # "JVASP-21195",
+    # "JVASP-1002",
+    # "JVASP-972",
     "JVASP-943",
     "JVASP-852",
-    #"JVASP-890",
-    #"JVASP-922",
-    #"JVASP-987",
-    #"JVASP-14832",
-    #"JVASP-14837",
-    #"JVASP-14622",
-    #"JVASP-14744",
-    #"JVASP-14812",
-    #"JVASP-14812",
+    # "JVASP-890",
+    # "JVASP-922",
+    # "JVASP-987",
+    # "JVASP-14832",
+    # "JVASP-14837",
+    # "JVASP-14622",
+    # "JVASP-14744",
+    # "JVASP-14812",
+    # "JVASP-14812",
     "JVASP-14601",
     "JVASP-14603",
     "JVASP-14604",
@@ -129,12 +128,28 @@ jids = [
     "JVASP-102277",
 ]
 
-#jids=['JVASP-972','JVASP-825','JVASP-1002','JVASP-943','JVASP-963','JVASP-14606','JVASP-14837','JVASP-934','JVASP-21195','JVASP-984','JVASP-1014','JVASP-79561','JVASP-901']
-#jids=['JVASP-14837','JVASP-934','JVASP-21195','JVASP-984','JVASP-1014','JVASP-79561','JVASP-901']
-jids_done=['JVASP-963', 'JVASP-14606', 'JVASP-816', 'JVASP-910', 'JVASP-867', 'JVASP-972', 'JVASP-825', 'JVASP-1002', 'JVASP-943', 'JVASP-14837', 'JVASP-934', 'JVASP-21195', 'JVASP-984', 'JVASP-1014', 'JVASP-79561', 'JVASP-901']
+# jids=['JVASP-972','JVASP-825','JVASP-1002','JVASP-943','JVASP-963','JVASP-14606','JVASP-14837','JVASP-934','JVASP-21195','JVASP-984','JVASP-1014','JVASP-79561','JVASP-901']
+# jids=['JVASP-14837','JVASP-934','JVASP-21195','JVASP-984','JVASP-1014','JVASP-79561','JVASP-901']
+jids_done = [
+    "JVASP-963",
+    "JVASP-14606",
+    "JVASP-816",
+    "JVASP-910",
+    "JVASP-867",
+    "JVASP-972",
+    "JVASP-825",
+    "JVASP-1002",
+    "JVASP-943",
+    "JVASP-14837",
+    "JVASP-934",
+    "JVASP-21195",
+    "JVASP-984",
+    "JVASP-1014",
+    "JVASP-79561",
+    "JVASP-901",
+]
 
-# jids=['JVASP-816'] #Al
-# chempot=loadjson("chempot.json")
+
 @timeout(1200)
 def get_mono_surf_energy(atoms=None, id=""):
     atoms_cvn = Spacegroup3D(atoms).conventional_standard_structure
@@ -142,7 +157,7 @@ def get_mono_surf_energy(atoms=None, id=""):
     indices = symmetrically_distinct_miller_indices(
         max_index=1, cvn_atoms=atoms_cvn
     )
-    indices=[[1,1,1]]
+    indices = [[1, 1, 1]]
     epa = info_perfect["energy"] / atoms_cvn.num_atoms
     mem = []
     for j in indices:
@@ -183,22 +198,24 @@ def get_mono_surf_energy(atoms=None, id=""):
 
 mem = []
 for i in jids:
- if i not in jids_done:
-    try:
-        atoms = Atoms.from_dict(get_jid_data(jid=i, dataset="dft_3d")["atoms"])
-        print("STARTING")
-        print("jid", i)
-        print(atoms)
-        dinfo = get_mono_surf_energy(atoms=atoms, id=i)
-        # nm, def_en,epa = get_mono_vac_energy(atoms=atoms)
-        info = {}
-        info["id"] = i
-        info["defect_energetics"] = dinfo
-        mem.append(info)
-        print("NAME", len(mem), i, mem[-1])
-    except Exception as exp:
-        print("Exp", exp)
-        pass
+    if i not in jids_done:
+        try:
+            atoms = Atoms.from_dict(
+                get_jid_data(jid=i, dataset="dft_3d")["atoms"]
+            )
+            print("STARTING")
+            print("jid", i)
+            print(atoms)
+            dinfo = get_mono_surf_energy(atoms=atoms, id=i)
+            # nm, def_en,epa = get_mono_vac_energy(atoms=atoms)
+            info = {}
+            info["id"] = i
+            info["defect_energetics"] = dinfo
+            mem.append(info)
+            print("NAME", len(mem), i, mem[-1])
+        except Exception as exp:
+            print("Exp", exp)
+            pass
 
 print("mem", len(mem))
 dumpjson(data=mem, filename="mono_surf2multi-Elements.json")

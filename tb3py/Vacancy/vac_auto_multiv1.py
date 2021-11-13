@@ -2,8 +2,8 @@ from jarvis.analysis.defects.vacancy import Vacancy
 from jarvis.db.jsonutils import loadjson, dumpjson
 from jarvis.core.atoms import Atoms
 from jarvis.db.figshare import data
-from tb3py.main import get_energy_bandstructure, get_energy
-from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
+from tb3py.main import get_energy
+# from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
 
 dat = data("dft_3d")
 
@@ -122,10 +122,12 @@ jids = [
     "JVASP-102277",
 ]
 
-jids=['JVASP-39']
+jids = ["JVASP-39"]
 chempot = loadjson("chempot.json")
 
-jids=['JVASP-25117','JVASP-864','JVASP-1011','JVASP-828','JVASP-910']
+jids = ["JVASP-25117", "JVASP-864", "JVASP-1011", "JVASP-828", "JVASP-910"]
+
+
 def get_mono_vac_energy(atoms=None, jid=""):
     strts = Vacancy(atoms).generate_defects(
         # on_conventional_cell=True, enforce_c_size=12, extend=0
@@ -133,7 +135,7 @@ def get_mono_vac_energy(atoms=None, jid=""):
         enforce_c_size=10,
         extend=0,
     )
-    print (strts,len(strts))
+    print(strts, len(strts))
     # print ('STRTS',len(strts))#,[j.to_dict['symbol'] for j in strts])
     perf_atoms = Atoms.from_dict(strts[0].to_dict()["atoms"])
     info_perfect = get_energy(perf_atoms, relax_atoms=False)
@@ -161,7 +163,6 @@ def get_mono_vac_energy(atoms=None, jid=""):
             - epa * (strt.num_atoms + 1)
             + chempot[j.to_dict()["symbol"]]["energy"]
         )
-        # def_en = info_def["energy"] - epa * perf_atoms.num_atoms + chempot[j.to_dict()["symbol"]]['energy']
         print(" Vacancy name", name, j.to_dict()["symbol"], def_en)
         info = {}
         info["name"] = name
@@ -180,21 +181,21 @@ def get_mono_vac_energy(atoms=None, jid=""):
 mem = []
 for i in dat:
     if i["jid"] in jids:
-        #try:
-            atoms = Atoms.from_dict(i["atoms"])
-            print("STARTING")
-            print("jid", i["jid"])
-            print(atoms)
-            dinfo = get_mono_vac_energy(atoms=atoms, jid=i["jid"])
-            # nm, def_en,epa = get_mono_vac_energy(atoms=atoms)
-            info = {}
-            info["id"] = i["jid"]
-            info["defect_energetics"] = dinfo
-            mem.append(info)
-            print("NAME", len(mem), i["jid"], mem[-1])
-        #except Exception as exp:
-        #    print("Exp", exp)
-        #    pass
+        # try:
+        atoms = Atoms.from_dict(i["atoms"])
+        print("STARTING")
+        print("jid", i["jid"])
+        print(atoms)
+        dinfo = get_mono_vac_energy(atoms=atoms, jid=i["jid"])
+        # nm, def_en,epa = get_mono_vac_energy(atoms=atoms)
+        info = {}
+        info["id"] = i["jid"]
+        info["defect_energetics"] = dinfo
+        mem.append(info)
+        print("NAME", len(mem), i["jid"], mem[-1])
+    # except Exception as exp:
+    #    print("Exp", exp)
+    #    pass
 
 print("mem", len(mem))
 dumpjson(data=mem, filename="mono_vac2multi-Elements.json")

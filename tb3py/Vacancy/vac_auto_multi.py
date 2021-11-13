@@ -2,8 +2,8 @@ from jarvis.analysis.defects.vacancy import Vacancy
 from jarvis.db.jsonutils import loadjson, dumpjson
 from jarvis.core.atoms import Atoms
 from jarvis.db.figshare import data
-from tb3py.main import get_energy_bandstructure, get_energy
-from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
+from tb3py.main import get_energy
+# from jarvis.analysis.thermodynamics.energetics import get_optb88vdw_energy
 
 dat = data("dft_3d")
 
@@ -122,10 +122,22 @@ jids = [
     "JVASP-102277",
 ]
 
-jids=['JVASP-39']
+jids = ["JVASP-39"]
 chempot = loadjson("chempot.json")
 
-jids=['JVASP-25117','JVASP-837','JVASP-864','JVASP-95268','JVASP-1011','JVASP-25144','JVASP-14603','JVASP-828','JVASP-910']
+jids = [
+    "JVASP-25117",
+    "JVASP-837",
+    "JVASP-864",
+    "JVASP-95268",
+    "JVASP-1011",
+    "JVASP-25144",
+    "JVASP-14603",
+    "JVASP-828",
+    "JVASP-910",
+]
+
+
 def get_mono_vac_energy(atoms=None, jid=""):
     strts = Vacancy(atoms).generate_defects(
         # on_conventional_cell=True, enforce_c_size=12, extend=0
@@ -160,7 +172,6 @@ def get_mono_vac_energy(atoms=None, jid=""):
             - epa * (strt.num_atoms + 1)
             + chempot[j.to_dict()["symbol"]]["energy"]
         )
-        # def_en = info_def["energy"] - epa * perf_atoms.num_atoms + chempot[j.to_dict()["symbol"]]['energy']
         print(" Vacancy name", name, j.to_dict()["symbol"], def_en)
         info = {}
         info["name"] = name
