@@ -24,7 +24,7 @@ jobs:
         python -m pip install numpy
         python setup.py install
         pytest tb3py/tests/test_ptop.py
-        coverage run -m pytest
+        coverage run -m pytest tb3py/tests/test_ptop.py
         coverage report -m
         codecov
 
