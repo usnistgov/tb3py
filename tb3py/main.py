@@ -4,6 +4,7 @@ import os
 import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
+
 # from jarvis.core.kpoints import generate_kgrid
 
 import matplotlib.pyplot as plt
@@ -22,21 +23,7 @@ plt.switch_backend("agg")
 sysimage = os.path.join(
     os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
 )
-julia_cmd = mpath = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "julia",
-    "julia-1.6.1",
-    "bin",
-    "julia",
-)
-julia_bin = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "tb3py",
-    "julia",
-    "julia-1.6.1",
-    "bin",
-)  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
-os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
+julia_cmd = "julia"
 # print(os.environ["PATH"])
 jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
 jlsession.eval("using Suppressor")  # suppress output
