@@ -193,4 +193,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Python wrapper for Tight-binding two and three body."
     )
-    example()
+    # example()
+    parser.add_argument(
+        "--poscar_file",
+        default="NA",
+        help="Path to a POSCAR file.",
+    )
+
+    parser.add_argument(
+        "--cif_file",
+        default="NA",
+        help="Path to a .cif file.",
+    )
+
+    args = parser.parse_args(sys.argv[1:])
+    if args.poscar_file != "NA":
+        predict_for_poscar(filename=args.poscar_file)
+    elif args.cif_file != "NA":
+        predict_for_cif(filename=args.cif_file)
+    else:
+        raise NotImplementedError(args)
