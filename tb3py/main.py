@@ -194,4 +194,3 @@ if __name__ == "__main__":
         description="Python wrapper for Tight-binding two and three body."
     )
     example()
-    
