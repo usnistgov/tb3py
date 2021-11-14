@@ -1,4 +1,7 @@
 ![alt text](https://github.com/usnistgov/tb3py/actions/workflows/main.yml/badge.svg)
+[![codecov](https://codecov.io/gh/usnistgov/tb3py/branch/master/graph/badge.svg?token=TuQF7eVF7F)](https://codecov.io/gh/usnistgov/tb3py)
+![alt text](
+https://anaconda.org/conda-forge/tb3py/badges/version.svg)
 # TB3PY
 
 by Kevin F. Garrity and Kamal Choudhary
