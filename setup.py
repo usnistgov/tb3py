@@ -117,44 +117,13 @@ else:
     print("Correct Julia version found in path")
 
 
-print("My julia command : ", julia_cmd)
-
-# install python dependences
-# os.system("python3 -m pip install --user julia")
-
-# using julia
-# import julia
-# julia.install()
-
-
-# os.system("pip install pmdarima")
-
-
-# install
 sysimage = os.path.join(
     os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
 )
 print("sysimage", sysimage)
 if not os.path.isfile(sysimage):
-    # import TB3.juliarun as juliarun
-    install(julia_cmd)  # install Julia dependences
-# julia_bin = os.path.join(
-#    mpath, "tb3py", "julia", "julia-1.6.1", "bin"
-# )  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
-# os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
-"""
-
-from julia.api import Julia
-jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
-jlsession.eval("using Suppressor") # suppress output
-
-from julia import ThreeBodyTB
-c = ThreeBodyTB.makecrys( [[5.0,0,0],[0,5.0,0],[0,0,5.0]] , [[0, 0, 0]], ["Li"])
-
-print()
-print("result of makecrys")
-print(c)
-print()
-print("the end")
-print()
-"""
+    try:
+        install(julia_cmd)  # install Julia dependences
+    except Exception as exp:
+        print(exp)
+        pass
