@@ -30,6 +30,7 @@ Now, let's make a conda environment, say "version", choose other name as you lik
 ```
 conda create --name my_tb3 python=3.8
 source activate my_tb3
+conda install -c conda-forge julia
 ```
 
 Now, let's install the package:
@@ -48,6 +49,13 @@ ThreeBodyTB.jl, and c) create a system image for fast loading.
 For main documentation of ThreeBodyTB.jl, see [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pages.nist.gov/ThreeBodyTB.jl/)
 This code is only the wrapper that downloads and installs that code.
 
+Alternate [conda install](https://anaconda.org/conda-forge/tb3py):
+```
+conda create --name my_tb3 python=3.8
+source activate my_tb3
+conda install -c conda-forge tb3py
+```
+
 ## Examples
 
 - Predict total energy, electronic bandgap and bandstructure for a system using POSCAR file:
@@ -60,6 +68,9 @@ This code is only the wrapper that downloads and installs that code.
   ```
   python tb3py/main.py --cif_file tb3py/examples/JVASP-1002.cif
   ```
+
+There are several other examples provided to calculate total energies, electronic bandstructures, density of states, forces on atoms, vacancy and surface formation energies in the repo also.
+More details and documentation will be available soon.
 
 ## Performance Tips
 
