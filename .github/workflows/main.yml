@@ -26,7 +26,7 @@ jobs:
         pytest tb3py/tests/test_ptop.py
         coverage run -m pytest tb3py/tests/test_ptop.py
         coverage report -m
-        codecov
+        codecov --token="0e548bc4-a189-4eee-a74f-00c6f05d3388"
 
     - name: Lint
       run: |
