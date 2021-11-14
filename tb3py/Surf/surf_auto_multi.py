@@ -1,5 +1,3 @@
-"""Module for surface enrgy."""
-
 # from jarvis.analysis.defects.vacancy import Vacancy
 from jarvis.db.jsonutils import dumpjson
 from jarvis.core.atoms import Atoms
@@ -130,9 +128,24 @@ jids = [
     "JVASP-102277",
 ]
 
+jids = [
+    "JVASP-972",
+    "JVASP-825",
+    "JVASP-1002",
+    "JVASP-943",
+    "JVASP-963",
+    "JVASP-14606",
+    "JVASP-14837",
+    "JVASP-934",
+    "JVASP-21195",
+    "JVASP-984",
+    "JVASP-1014",
+    "JVASP-79561",
+    "JVASP-901",
+]
+
 
 def get_mono_surf_energy(atoms=None, id=""):
-    """Get surface enrgy."""
     atoms_cvn = Spacegroup3D(atoms).conventional_standard_structure
     info_perfect = get_energy(atoms_cvn, relax_atoms=False)
     indices = symmetrically_distinct_miller_indices(

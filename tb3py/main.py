@@ -4,52 +4,45 @@ import os
 import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
+
 # from jarvis.core.kpoints import generate_kgrid
 
 import matplotlib.pyplot as plt
 from jarvis.db.figshare import get_jid_data
 from jarvis.core.atoms import Atoms
 import argparse
-import sys
 import pprint
+
 
 plt.switch_backend("agg")
 
 # angst_to_bohr = 1  # 0.529177210903  # 1.88973
 # const = 13.605662285137
 
-
-sysimage = os.path.join(
-    os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
-)
-julia_cmd = mpath = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "julia",
-    "julia-1.6.1",
-    "bin",
-    "julia",
-)
-julia_bin = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "tb3py",
-    "julia",
-    "julia-1.6.1",
-    "bin",
-)  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
-
-if not os.path.exists(julia_bin):
-    print("using preinstalled julia")
+try:
+    sysimage = os.path.join(
+        os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
+    )
     julia_cmd = "julia"
-    julia_bin = "julia"
+    # print(os.environ["PATH"])
+    jlsession = Julia(
+        runtime=julia_cmd, compiled_modules=False, sysimage=sysimage
+    )
+    jlsession.eval("using Suppressor")  # suppress output
+except Exception:
+    print("Using non-sysimage version, might be slow.")
+    from julia.api import Julia
 
-
-os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
-# print(os.environ["PATH"])
-jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
-jlsession.eval("using Suppressor")  # suppress output
+    jl = Julia(compiled_modules=False)
+    cmd = (
+        'julia --eval  "using ThreeBodyTB; using Plots; ThreeBodyTB.compile()"'
+    )
+    os.system(cmd)
+    pass
 try:
     from julia import ThreeBodyTB as TB
-except Exception:
+except Exception as exp:
+    print("Expjl", exp)
     pass
 
 
@@ -200,7 +193,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Python wrapper for Tight-binding two and three body."
     )
-
+    # example()
     parser.add_argument(
         "--poscar_file",
         default="NA",

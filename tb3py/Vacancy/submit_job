@@ -1,0 +1,10 @@
+#!/bin/bash
+#PBS -N vactb3
+#PBS -l nodes=1:ppn=1
+
+
+
+source ~/anaconda2/envs/my_tb3/bin/activate my_tb3
+
+cd /users/knc6/Software/tb3py/tb3py/Vacancy
+python vac_auto_multiv1.py 2>&1|tee out
