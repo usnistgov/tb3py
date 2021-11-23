@@ -28,4 +28,4 @@ print(stress)
 # See https://pages.nist.gov/ThreeBodyTB.jl/ for documenation
 
 #for example 
-#tb3.TB.BandStruct.plot_bands(tbc)
+#tb3.TB.BandStruct.plot_bandstr(tbc)
