@@ -54,6 +54,47 @@ def get_crys_from_atoms(atoms=None):
     crys = TB.makecrys(lattice_mat, frac_coords, elements)
     return crys
 
+def get_twobody_hamiltonian(atom1="H",atom2="H",orb1="s",orb2="s", R = [0.75, 0.0, 0.0]):
+    """get two-body only intersite matrix elements
+       R is the real space (3 dimensional) cartesian vector from atom1 to atom2 in Angstrom 
+       does not work for onsite matrix elements
+       returns hamiltonian in eV and overlap (dimensionless, normalized)"""
+    
+    (h,s) = TB.get_twobody(atom1, atom2,orb1, orb2, R)
+
+    return h, s
+
+                    
+def get_hamiltonian_dict(atoms=None):
+    """Get a dictionary with the hamiltonian for atoms
+    Format of dictionary keys are (at1, type1, orb1, at2, type2, orb2, r1, r2, r3). The return values are (H,S), the hamiltonian (eV) and the overlap (in real space).
+    Returns both onsite and offsite matrix els """
+    
+    #A = np.eye(3) * 5.0
+    #coords = np.zeros((1, 3))
+    #crys = TB.makecrys(A, coords, ["Li"])
+
+    crys = get_energy(atoms=atoms)
+    energy, tbc, flag = TB.scf_energy(crys)
+
+    ind2orb, orb2ind, etotal, nval = TB.CrystalMod.orbital_index(crys)
+
+    d = dict()
+
+    for i in range(tbc.tb.nwan):
+        for j in range(tbc.tb.nwan):
+            for nr in range(tbc.tb.nr):
+                a1,t1,s1 = ind2orb[i+1]
+                a2,t2,s2 = ind2orb[j+1]
+                r = tbc.tb.ind_arr[nr,:]
+
+                d[(a1-1,t1,s1,a2-1,t2,s2,r[0],r[1],r[2])] = (tbc.tb.H[i,j,nr]*13.605662285137, tbc.tb.S[i,j,nr])  #bohr to ev conversion
+                
+#                print([a1,t1,s1], [a2,t2,s2], r, tbc.tb.H[i,j,nr], tbc.tb.S[i,j,nr])
+    return d
+                
+
+            
 
 def get_energy_force_stress(atoms=None):
     """Get energy, forces and strss."""
