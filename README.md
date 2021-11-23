@@ -80,6 +80,8 @@ This code is only the wrapper that downloads and installs that code.
 There are several other examples provided to calculate total energies, electronic bandstructures, density of states, forces on atoms, vacancy and surface formation energies in the repo also.
 More details and documentation will be available soon.
 
+You can either use the python functions defined in main.py to access julia functions, or access the julia functions directly as demonstrated in [this example][tb3py/examples/example_using_julia_functions_directly.py]
+
 ## Performance Tips
 
 - Julia can take advantage multiple threads. Try setting the environment variable below as appropriate for your machine.
