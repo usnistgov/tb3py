@@ -77,10 +77,13 @@ This code is only the wrapper that downloads and installs that code.
   python tb3py/main.py --cif_file tb3py/examples/JVASP-1002.cif
   ```
 
-There are several other examples provided to calculate total energies, electronic bandstructures, density of states, forces on atoms, vacancy and surface formation energies in the repo also.
-More details and documentation will be available soon.
+There are several other examples provided to calculate total energies,
+electronic bandstructures, density of states, forces on atoms, vacancy
+and surface formation energies in the repo also.  More details and
+documentation will be available soon.
 
-You can either use the python functions defined in main.py to access julia functions, or access the julia functions directly as demonstrated in [this example](tb3py/examples/example_using_julia_functions_directly.py)
+You can either use the python functions defined in main.py to access julia functions, 
+or access the julia functions directly as demonstrated in [this example](tb3py/examples/example_using_julia_functions_directly.py)
 
 ## Performance Tips
 
