@@ -1,4 +1,10 @@
 ![alt text](https://github.com/usnistgov/tb3py/actions/workflows/main.yml/badge.svg)
+[![codecov](https://codecov.io/gh/usnistgov/tb3py/branch/master/graph/badge.svg?token=TuQF7eVF7F)](https://codecov.io/gh/usnistgov/tb3py)
+![alt text](
+https://anaconda.org/conda-forge/tb3py/badges/version.svg)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/usnistgov/tb3py)
+![PyPI](https://img.shields.io/pypi/v/tb3py)
+![GitHub repo size](https://img.shields.io/github/repo-size/usnistgov/tb3py)
 # TB3PY
 
 by Kevin F. Garrity and Kamal Choudhary
@@ -30,6 +36,7 @@ Now, let's make a conda environment, say "version", choose other name as you lik
 ```
 conda create --name my_tb3 python=3.8
 source activate my_tb3
+conda install -c conda-forge julia
 ```
 
 Now, let's install the package:
@@ -40,6 +47,14 @@ cd tb3py
 python setup.py develop
 ```
 
+
+Alternate [conda install](https://anaconda.org/conda-forge/tb3py):
+```
+conda create --name my_tb3 python=3.8
+source activate my_tb3
+conda install -c conda-forge tb3py
+```
+
 Note that this can take a while and may use significant disk space. The code
 will, if necessary, a) download & install Julia b) download & install
 ThreeBodyTB.jl, and c) create a system image for fast loading.
@@ -47,6 +62,7 @@ ThreeBodyTB.jl, and c) create a system image for fast loading.
 
 For main documentation of ThreeBodyTB.jl, see [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pages.nist.gov/ThreeBodyTB.jl/)
 This code is only the wrapper that downloads and installs that code.
+
 
 ## Examples
 
@@ -60,6 +76,14 @@ This code is only the wrapper that downloads and installs that code.
   ```
   python tb3py/main.py --cif_file tb3py/examples/JVASP-1002.cif
   ```
+
+There are several other examples provided to calculate total energies,
+electronic bandstructures, density of states, forces on atoms, vacancy
+and surface formation energies in the repo also.  More details and
+documentation will be available soon.
+
+You can either use the python functions defined in main.py to access julia functions, 
+or access the julia functions directly as demonstrated in [this example](tb3py/examples/example_using_julia_functions_directly.py)
 
 ## Performance Tips
 

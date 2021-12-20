@@ -18,13 +18,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        conda install -y -c conda-forge julia
         python -m pip install --upgrade pip
         pip install flake8 pytest pycodestyle pydocstyle codecov pytest-cov coverage 
         python -m pip install numpy
         python setup.py install
-        #pytest tb3py/tests/test_ptop.py
-        #coverage run -m pytest
-        #coverage report -m
+        pytest tb3py/tests/test_ptop.py
+        coverage run -m pytest tb3py/tests/test_ptop.py
+        coverage report -m
+        codecov --token="0e548bc4-a189-4eee-a74f-00c6f05d3388"
 
     - name: Lint
       run: |

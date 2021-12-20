@@ -4,55 +4,97 @@ import os
 import numpy as np
 from julia.api import Julia
 from jarvis.core.kpoints import Kpoints3D as Kpoints
-from jarvis.core.kpoints import generate_kgrid
+
+# from jarvis.core.kpoints import generate_kgrid
 
 import matplotlib.pyplot as plt
 from jarvis.db.figshare import get_jid_data
 from jarvis.core.atoms import Atoms
 import argparse
-import sys
+import pprint
+
 
 plt.switch_backend("agg")
 
-angst_to_bohr = 1  # 0.529177210903  # 1.88973
-const = 13.605662285137
+# angst_to_bohr = 1  # 0.529177210903  # 1.88973
+# const = 13.605662285137
 
+try:
+    sysimage = os.path.join(
+        os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
+    )
+    julia_cmd = "julia"
+    # print(os.environ["PATH"])
+    jlsession = Julia(
+        runtime=julia_cmd, compiled_modules=False, sysimage=sysimage
+    )
+    jlsession.eval("using Suppressor")  # suppress output
+except Exception:
+    print("Using non-sysimage version, might be slow.")
+    from julia.api import Julia
 
-sysimage = os.path.join(
-    os.environ["HOME"], ".julia", "sysimages", "sys_threebodytb.so"
-)
-julia_cmd = mpath = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "julia",
-    "julia-1.6.1",
-    "bin",
-    "julia",
-)
-julia_bin = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "tb3py",
-    "julia",
-    "julia-1.6.1",
-    "bin",
-)  # mpath+"/src/julia/julia-1.6.1/bin/julia" # path for julia
-os.environ["PATH"] += os.pathsep + os.path.join(julia_bin)
-# print(os.environ["PATH"])
-jlsession = Julia(runtime=julia_cmd, compiled_modules=False, sysimage=sysimage)
-jlsession.eval("using Suppressor")  # suppress output
+    jl = Julia(compiled_modules=False)
+    cmd = (
+        'julia --eval  "using ThreeBodyTB; using Plots; ThreeBodyTB.compile()"'
+    )
+    os.system(cmd)
+    pass
 try:
     from julia import ThreeBodyTB as TB
-except Exception:
+except Exception as exp:
+    print("Expjl", exp)
     pass
 
 
 def get_crys_from_atoms(atoms=None):
     """Get TightlyBound crys object from jarvis.core.Atoms."""
-    lattice_mat = np.array(atoms.lattice_mat, dtype="float") * angst_to_bohr
+    lattice_mat = np.array(atoms.lattice_mat, dtype="float")
     frac_coords = np.array(atoms.frac_coords, dtype="float")
     elements = np.array(atoms.elements)
     crys = TB.makecrys(lattice_mat, frac_coords, elements)
     return crys
 
+def get_twobody_hamiltonian(atom1="H",atom2="H",orb1="s",orb2="s", R = [0.75, 0.0, 0.0]):
+    """get two-body only intersite matrix elements
+       R is the real space (3 dimensional) cartesian vector from atom1 to atom2 in Angstrom 
+       does not work for onsite matrix elements
+       returns hamiltonian in eV and overlap (dimensionless, normalized)"""
+    
+    (h,s) = TB.get_twobody(atom1, atom2,orb1, orb2, R)
+
+    return h, s
+
+                    
+def get_hamiltonian_dict(atoms=None):
+    """Get a dictionary with the hamiltonian for atoms
+    Format of dictionary keys are (at1, type1, orb1, at2, type2, orb2, r1, r2, r3). The return values are (H,S), the hamiltonian (eV) and the overlap (in real space).
+    Returns both onsite and offsite matrix els """
+    
+    #A = np.eye(3) * 5.0
+    #coords = np.zeros((1, 3))
+    #crys = TB.makecrys(A, coords, ["Li"])
+
+    crys = get_energy(atoms=atoms)
+    energy, tbc, flag = TB.scf_energy(crys)
+
+    ind2orb, orb2ind, etotal, nval = TB.CrystalMod.orbital_index(crys)
+
+    d = dict()
+
+    for i in range(tbc.tb.nwan):
+        for j in range(tbc.tb.nwan):
+            for nr in range(tbc.tb.nr):
+                a1,t1,s1 = ind2orb[i+1]
+                a2,t2,s2 = ind2orb[j+1]
+                r = tbc.tb.ind_arr[nr,:]
+
+                d[(a1-1,t1,s1,a2-1,t2,s2,r[0],r[1],r[2])] = (tbc.tb.H[i,j,nr]*13.605662285137, tbc.tb.S[i,j,nr])  #bohr to ev conversion
+                
+#                print([a1,t1,s1], [a2,t2,s2], r, tbc.tb.H[i,j,nr], tbc.tb.S[i,j,nr])
+    return d
+                
+
+            
 
 def get_energy_force_stress(atoms=None):
     """Get energy, forces and strss."""
@@ -92,7 +134,7 @@ def get_energy(
     )
     info["directgap"] = directgap
     info["indirectgap"] = indirectgap
-    info["atomization_energy"] = energy
+    info["energy"] = energy
     info["force"] = force
     info["stress"] = stress
 
@@ -107,9 +149,9 @@ def get_energy_bandstructure(atoms=None, filename=None):
     kpts = kpoints.to_dict()["kpoints"]
     crys = get_crys_from_atoms(atoms)
     energy, tbc, flag = TB.scf_energy(crys)
-    tot_energy = round(const * float(energy), 5)
-    vals = const * np.array(TB.calc_bands(tbc, kpts) - tbc.efermi)
-    vbm, cbm = TB.TB.find_vbm_cbm(vals, const * tbc.efermi)
+    tot_energy = energy
+    vals = np.array(TB.calc_bands(tbc, kpts) - tbc.efermi)
+    vbm, cbm = TB.TB.find_vbm_cbm(vals, tbc.efermi)
     band_gap = cbm - vbm
     if band_gap < 0:
         band_gap = 0
@@ -154,11 +196,12 @@ def example():
 def predict_for_poscar(filename="POSCAR", band_file="bands.png"):
     """Predict properties for a POSCAR file."""
     atoms = Atoms.from_poscar(filename)
-    tot_energy, band_gap, tbc = get_energy_bandstructure(
-        atoms=atoms, filename=band_file
-    )
-    print("tot_energy, band_gap", tot_energy, band_gap)
-    return tot_energy, band_gap
+    info = get_energy(atoms=atoms)
+    # tot_energy, band_gap, tbc = get_energy_bandstructure(
+    #    atoms=atoms, filename=band_file
+    # )
+    pprint.pprint(info)
+    return info
 
 
 def predict_for_cif(filename="atoms.cif", band_file="bands.png"):
@@ -191,7 +234,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Python wrapper for Tight-binding two and three body."
     )
-
+    # example()
     parser.add_argument(
         "--poscar_file",
         default="NA",
