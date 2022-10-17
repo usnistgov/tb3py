@@ -1,4 +1,5 @@
 import tb3py.main as tb3
+import numpy as np
 
 #this example shows how to use the julia commands directly in python.
 #it is also possible to access some of these commands with a more pythonic
@@ -6,7 +7,9 @@ import tb3py.main as tb3
 
 #make crystal object from POSCAR
 
-c = tb3.TB.makecrys("POSCAR")
+#c = tb3.TB.makecrys("POSCAR")
+
+c = tb3.TB.makecrys(np.eye(3) * 5.0, [0.0,0.0,0.0], ["H"]) 
 
 # calculate energy
 
