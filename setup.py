@@ -103,6 +103,7 @@ hasjulia = (
     or ("julia version 1.5" in str(out))
     or ("julia version 1.7" in str(out))
     or ("julia version 1.8" in str(out))
+    or ("julia version 1.9" in str(out))
 )
 
 
