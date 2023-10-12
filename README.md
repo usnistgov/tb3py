@@ -1,3 +1,4 @@
+[![name](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/ThreeBodyTB_julia.ipynb)
 ![alt text](https://github.com/usnistgov/tb3py/actions/workflows/main.yml/badge.svg)
 [![codecov](https://codecov.io/gh/usnistgov/tb3py/branch/master/graph/badge.svg?token=TuQF7eVF7F)](https://codecov.io/gh/usnistgov/tb3py)
 ![alt text](
