@@ -67,6 +67,18 @@ This code is only the wrapper that downloads and installs that code.
 
 ## Examples
 
+
+
+| Notebooks                                                                                                                                      | Google&nbsp;Colab                                                                                                                                        | Descriptions                                                                                                                                                                                                                                                                                                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Python based example](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/tb3py.ipynb)                                                       | [![Open in Google Colab]](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/tb3py.ipynb)                                 | Examples for running TB3Py using Python+Julia, getting wannier90_hr.dat files, bandstructure/DOS calculations.                                                                                                                                                                                                                                                                       |
+| [Julia based example](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/ThreeBodyTB_julia.ipynb)                                                  | [![Open in Google Colab]](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/ThreeBodyTB_julia.ipynb)                            | Examples of running Julia based code with similar functionality as above.                                                                                                                                                                                                                                                                                                                                |
+
+
+
+[Open in Google Colab]: https://colab.research.google.com/assets/colab-badge.svg
+
+
 - Predict total energy, electronic bandgap and bandstructure for a system using POSCAR file:
 
   ```
@@ -80,6 +92,9 @@ This code is only the wrapper that downloads and installs that code.
 
 There are several other examples provided to calculate total energies, electronic bandstructures, density of states, forces on atoms, vacancy and surface formation energies in the repo also.
 More details and documentation will be available soon.
+
+
+
 
 ## Performance Tips
 
