@@ -15,6 +15,8 @@ the method described in
 
 # Usage
 
+[![Open In Colab](https://google.com)](https://colab.research.google.com/github/usnistgov/tb3py/notebooks/tb3py_tutorial.ipynb)
+
 The [documentation](https://pages.nist.gov/ThreeBodyTB.jl/) for
 ThreeBodyTB.jl covers detailed usage of the main julia code. The python
 wrapper can access any function from ThreeBodyTB.jl by prepending
