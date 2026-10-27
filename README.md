@@ -140,13 +140,22 @@ The two environment variables are to prevent issues with
 multithreading between python and Julia.
 
 
-# Author and Links
+# Author, Links, Release Notes
+
+### Links
 
 - [Main github of ThreeBodyTB.jl](https://github.com/usnistgov/ThreeBodyTB.jl)
 - [Paper: PhysRevMaterials.7.044603](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.7.044603)
 - [Main documentation](https://pages.nist.gov/ThreeBodyTB.jl/) 
 - [Main tutorial](https://pages.nist.gov/ThreeBodyTB.jl/ug_run/#Running-tight-binding-calculations) 
 - [My NIST page](https://www.nist.gov/people/kevin-garrity)
+
+
+### Release notes
+
+There was a major breaking reorg of this code on 10/27/2026. The previous version is archived under branch `old_version`.
+
+### Author
 
 Good luck. Let me know if you have any problems.
 
