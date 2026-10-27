@@ -121,7 +121,7 @@ Si   0.62500  0.62500  0.62500
 To install, clone the repository and run a setup command.
 
 ```
-git clone git@github.com:kfgarrity/tb3py.git
+git clone git@github.com:usnistgov/tb3py.git
 cd tb3py
 pip install -e .
 
