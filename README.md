@@ -4,7 +4,7 @@
 
 This package is a simple python wrapper for
 [ThreeBodyTB.jl](https://github.com/usnistgov/ThreeBodyTB.jl) that
-makes installing and using the code within python easier. It is not
+makes installing and using the code within python simple. It is not
 necessary to understand any [Julia](https://julialang.org/), and you
 get full access to the code.
 
