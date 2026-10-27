@@ -1,113 +1,158 @@
-[![name](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/ThreeBodyTB_julia.ipynb)
-![alt text](https://github.com/usnistgov/tb3py/actions/workflows/main.yml/badge.svg)
-[![codecov](https://codecov.io/gh/usnistgov/tb3py/branch/master/graph/badge.svg?token=TuQF7eVF7F)](https://codecov.io/gh/usnistgov/tb3py)
-![alt text](
-https://anaconda.org/conda-forge/tb3py/badges/version.svg)
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/usnistgov/tb3py)
-![PyPI](https://img.shields.io/pypi/v/tb3py)
-![GitHub repo size](https://img.shields.io/github/repo-size/usnistgov/tb3py)
-# TB3PY
+# tb3py - Python Wrapper for ThreeBodyTB.jl
 
-by Kevin F. Garrity and Kamal Choudhary
+<img align="right" src="https://github.com/kfgarrity/ThreeBodyTB.jl/blob/main/docs/src/assets/logo.svg" alt="logo" width="200" >
 
-This is a python wrapper for the
-[ThreeBodyTB.jl](http://github.com/usnistgov/ThreeBodyTB.jl) Julia
-package, which runs two- and three-body tight-binding calculations for
-materials.
+This package is a simple python wrapper for
+[ThreeBodyTB.jl](https://github.com/usnistgov/ThreeBodyTB.jl) that
+makes installing and using the code within python easier. It is not
+necessary to understand any [Julia](https://julialang.org/), and you
+get full access to the code.
 
-Using the Julia version directly is the primary method for running the
-code. However, this code is created to help users who might be more familiar
-with python using the
-[PyJulia](https://github.com/JuliaPy/pyjulia) interface.
+ThreeBodyTB.jl (see https://github.com/usnistgov/ThreeBodyTB.jl) is a
+Julia package to perform tight binding calculations. It is based on
+the method described in
+[PhysRevMaterials.7.044603](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.7.044603).
 
-## Installation
+# Usage
 
-First create a conda environment:
-Install miniconda environment from https://conda.io/miniconda.html
-Based on your system requirements, you'll get a file something like 'Miniconda3-latest-XYZ'.
-
-Now,
+The [documentation](https://pages.nist.gov/ThreeBodyTB.jl/) for
+ThreeBodyTB.jl covers detailed usage of the main julia code. The python
+wrapper can access any function from ThreeBodyTB.jl by prepending
+`tb3.jl.` . For example, the exported function `makecrys` from ThreeBodyTB.jl can
+be accessed as follows:
 
 ```
-bash Miniconda3-latest-Linux-x86_64.sh (for linux)
-bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+>>> import tb3py as tb3
+>>> c = tb3.jl.makecrys("POSCAR_example")
+>>> c
+Julia:
+Units: Å
+
+A1=     2.60000  2.60000  0.00000
+A2=     2.60000  0.00000  2.60000
+A3=     0.00000  2.60000  2.60000
+
+Si   0.00000  0.00000  0.00000
+Si   0.25000  0.25000  0.25000
+
+>>>
 ```
-Download 32/64 bit python 3.6 miniconda exe and install (for windows)
-Now, let's make a conda environment, say "version", choose other name as you like::
+Using `tb3.jl.ThreeBodyTB.makecrys` also works, and that syntax works for non-exported functions.
+
+An energy calculation and band structure calculation can be
+performed as
+
 ```
-conda create --name my_tb3 python=3.8 chardet
-source activate my_tb3
-conda install -c conda-forge julia=1.6.2
+>>> en, tbc, flag = tb3.jl.scf_energy(c)
+>>> tb3.jl.plot_bandstr_dos(tbc)
+>>> tb3.jl.savefig("t.pdf")
+```
+which will produce output like
+
+![bandstructure and dos](t.png)
+
+Basically, you need to write `tb3.jl.` before normal julia commands. A tutorial introducing relevant commands for code users is available [here](https://pages.nist.gov/ThreeBodyTB.jl/ug_run/#Running-tight-binding-calculations), it should be possible to access all that functionality from python.
+
+The code can also convert between numpy and julia objects fine. See:
+
+```
+>>> import numpy as np
+>>> A = np.eye(3) * 10
+>>> coords = np.zeros((1,3))
+>>> atoms = ["Ga"]
+>>> tb3.jl.makecrys(A, coords, atoms)
+Julia:
+Units: Å
+
+A1=     10.00000  0.00000  0.00000
+A2=     0.00000  10.00000  0.00000
+A3=     0.00000  0.00000  10.00000
+
+Ga   0.00000  0.00000  0.00000
+
+>>>
 ```
 
-Now, let's install the package:
+### Overloaded operators (slightly advanced)
+
+In some cases `ThreeBodyTB` can use overloaded operators to manipulate crystal structures, including generating supercells and scaling by a constant. It is possible to access this syntax in python using `seval` like this:
 ```
-pip install requests
-git clone https://github.com/usnistgov/tb3py.git
+>>> from juliacall import Main as jl
+>>> jl.c = c #c is a crystal object visible to python, we are making it visible to jl
+>>> jl.seval("(c * 3.0)")
+Julia:
+Units: Å
+
+A1=     7.80000  7.80000  0.00000
+A2=     7.80000  0.00000  7.80000
+A3=     0.00000  7.80000  7.80000
+
+Si   0.00000  0.00000  0.00000
+Si   0.25000  0.25000  0.25000
+
+>>> jl.seval("(c * [2,2,2])")
+Julia:
+Units: Å
+
+A1=     5.20000  5.20000  0.00000
+A2=     5.20000  0.00000  5.20000
+A3=     0.00000  5.20000  5.20000
+
+Si   0.00000  0.00000  0.00000
+Si   0.12500  0.12500  0.12500
+Si   0.00000  0.00000  0.50000
+Si   0.12500  0.12500  0.62500
+Si   0.00000  0.50000  0.00000
+Si   0.12500  0.62500  0.12500
+Si   0.00000  0.50000  0.50000
+Si   0.12500  0.62500  0.62500
+Si   0.50000  0.00000  0.00000
+Si   0.62500  0.12500  0.12500
+Si   0.50000  0.00000  0.50000
+Si   0.62500  0.12500  0.62500
+Si   0.50000  0.50000  0.00000
+Si   0.62500  0.62500  0.12500
+Si   0.50000  0.50000  0.50000
+Si   0.62500  0.62500  0.62500
+```
+
+# Installation
+
+To install, clone the repository and run a setup command.
+
+```
+git clone git@github.com:kfgarrity/tb3py.git
 cd tb3py
-python setup.py develop
+pip install -e .
+
+export JULIA_NUM_THREADS=1
+export PYTHON_JULIACALL_HANDLE_SIGNALS=yes
 ```
 
+This will install julia if necessary to run the backend (julia version
+1.12+ is necessary). The code will take a while to install and
+precompile (10+ minutes) the first time you import it. This process
+should cache the most computationally expensive compilation, but there
+will still be a small delay the first time you run a function in a
+given session.
 
-Alternate [conda install](https://anaconda.org/conda-forge/tb3py):
-```
-conda create --name my_tb3 python=3.8
-source activate my_tb3
-conda install -c conda-forge tb3py
-```
-
-Note that this can take a while and may use significant disk space. The code
-will, if necessary, a) download & install Julia b) download & install
-ThreeBodyTB.jl, and c) create a system image for fast loading.
+The two environment variables are to prevent issues with
+multithreading between python and Julia.
 
 
-For main documentation of ThreeBodyTB.jl, see [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://pages.nist.gov/ThreeBodyTB.jl/)
-This code is only the wrapper that downloads and installs that code.
+# Author and Links
 
+- [Main github of ThreeBodyTB.jl](https://github.com/usnistgov/ThreeBodyTB.jl)
+- [Paper: PhysRevMaterials.7.044603](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.7.044603)
+- [Main documentation](https://pages.nist.gov/ThreeBodyTB.jl/) 
+- [Main tutorial](https://pages.nist.gov/ThreeBodyTB.jl/ug_run/#Running-tight-binding-calculations) 
+- [My NIST page](https://www.nist.gov/people/kevin-garrity)
 
-## Examples
+Good luck. Let me know if you have any problems.
 
-
-
-| Notebooks                                                                                                                                      | Google&nbsp;Colab                                                                                                                                        | Descriptions                                                                                                                                                                                                                                                                                                                                                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Python based example](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/tb3py.ipynb)                                                       | [![Open in Google Colab]](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/tb3py.ipynb)                                 | Examples for running TB3Py using Python+Julia, getting wannier90_hr.dat files, bandstructure/DOS calculations.                                                                                                                                                                                                                                                                       |
-| [Julia based example](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/ThreeBodyTB_julia.ipynb)                                                  | [![Open in Google Colab]](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/ThreeBodyTB_julia.ipynb)                            | Examples of running Julia based code with similar functionality as above.                                                                                                                                                                                                                                                                                                                                |
-
-
-
-[Open in Google Colab]: https://colab.research.google.com/assets/colab-badge.svg
-
-
-- Predict total energy, electronic bandgap and bandstructure for a system using POSCAR file:
-
-  ```
-  python tb3py/main.py --poscar_file tb3py/examples/POSCAR
-  ```
-- Predict total energy, electronic bandgap and bandstructure for a system using cif file:
-
-  ```
-  python tb3py/main.py --cif_file tb3py/examples/JVASP-1002.cif
-  ```
-
-There are several other examples provided to calculate total energies, electronic bandstructures, density of states, forces on atoms, vacancy and surface formation energies in the repo also.
-More details and documentation will be available soon.
-
-
-
-
-## Performance Tips
-
-- Julia can take advantage multiple threads. Try setting the environment variable below as appropriate for your machine.
-    ```
-    JULIA_NUM_THREADS=8
-    export JULIA_NUM_THREADS
-    ```
-
-- Note that despite using pre-compilation where possible, some
-  functions will run faster the second time you run them due to the
-  jit.
-
-- Note that you must delete the system image if you want to update the
-  ThreeBodyTB.jl code and re-run the installation.
-
+kevin.garrity@nist.gov  
+Kevin F. Garrity  
+Material Data Division: 641.03  
+Material Measurement Laboratory  
+National Institute of Standards and Techonology (NIST)  
+Gaithersburg, MD  

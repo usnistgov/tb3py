@@ -1,7 +1,0 @@
-[run]
-omit =
-    # omit anything in a .local directory anywhere
-    */__init__.py
-    */*PyCall*
-    */*.pyc
-    *.pyc
